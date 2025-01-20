@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Import the API routes
-const Routes = require('./routes/mus_users.routes.js');
+const Routes = require('./routes/users.routes.js');
 
 // Middleware to parse JSON bodies
 app.use(express.json()); // Ensure Express can parse JSON bodies
