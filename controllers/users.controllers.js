@@ -9,7 +9,10 @@ module.exports = {
   getUserById: function (req, res, next) {
     users_instance.getUserById(req, res, next);
   },
-  getAdmin: function (req, res, next) {
-    users_instance.getAdmin(req, res, next);
+  getAllAdmins: function (req, res, next) {
+    users_instance.getAllAdmins(req, res, next);
+  },
+  addNewUser: function (req, res, next) {
+    users_instance.addNewUser(req, res, next);
   },
 };
