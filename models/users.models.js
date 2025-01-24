@@ -34,6 +34,7 @@ const users = sequelize.define(
     role_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      defaultValue: 3
     },
     active: {
       type: DataTypes.STRING,
