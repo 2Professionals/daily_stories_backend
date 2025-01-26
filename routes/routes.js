@@ -9,6 +9,9 @@ router.get('/users/getAllUsers/', users_controller.getAllUsers);
 router.get('/users/getUserById/:params?', users_controller.getUserById);
 router.get('/users/getAdmin/', users_controller.getAllAdmins);
 router.post('/users/addNewUser/:params?', users_controller.addNewUser);
+router.post("/users/login", users_controller.loginUser);
+router.get("/users/hash", users_controller.hashPasswords); // hash old passwords
+
 
 // ROLES ROUTES
 router.get('/roles/getAllRoles/', roles_controller.getAllRoles);
