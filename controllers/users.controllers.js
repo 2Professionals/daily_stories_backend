@@ -15,4 +15,10 @@ module.exports = {
   addNewUser: function (req, res, next) {
     users_instance.addNewUser(req, res, next);
   },
+  loginUser: function (req, res, next) {
+    users_instance.loginUser(req, res, next);
+  },
+  hashPasswords: function (req, res, next) {
+    users_instance.hashPasswords(req, res, next);
+  },
 };
