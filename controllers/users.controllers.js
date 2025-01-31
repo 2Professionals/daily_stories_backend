@@ -21,4 +21,13 @@ module.exports = {
   hashPasswords: function (req, res, next) {
     users_instance.hashPasswords(req, res, next);
   },
+  get_all_users_count: function (req, res, next) {
+    users_instance.get_all_users_count(req, res, next);
+  },
+  get_all_active_users_count: function (req, res, next) {
+    users_instance.get_all_active_users_count(req, res, next);
+  },
+  get_all_inactive_users_count: function (req, res, next) {
+    users_instance.get_all_inactive_users_count(req, res, next);
+  },
 };
