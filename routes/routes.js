@@ -11,9 +11,8 @@ router.get('/users/getAdmin/', users_controller.getAllAdmins);
 router.post('/users/addNewUser/:params?', users_controller.addNewUser);
 router.post("/users/login", users_controller.loginUser);
 router.get("/users/hash", users_controller.hashPasswords); // hash old passwords
-router.get('/users/get_all_users_count/', users_controller.get_all_users_count);
-router.get('/users/get_all_active_users_count/', users_controller.get_all_active_users_count);
-router.get('/users/get_all_inactive_users_count/', users_controller.get_all_inactive_users_count);
+router.get('/users/getUserStatistics/', users_controller.getUserStatistics);
+
 
 
 

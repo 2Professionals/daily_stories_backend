@@ -296,72 +296,37 @@ class usersDao {
     }
   }
 
-  async get_all_users_count(req, res, next) {
+  async getUserStatistics(req, res, next) {
     try {
-      console.log("users ===> ", users);
-      
-      const count = await users.count();
+      const query = `
+        SELECT 
+          (SELECT COUNT(*) FROM users) AS total_users,
+          (SELECT COUNT(*) FROM users WHERE active='Y') AS active_users,
+          (SELECT COUNT(*) FROM users WHERE active='N') AS inactive_users,
+          (SELECT COUNT(*) FROM users 
+            LEFT JOIN roles ON users.role_id = roles.role_id 
+            WHERE roles.role_name = 'admin' OR roles.role_name = 'super admin') AS admins_count
+      `;
   
-      res.status(200).json({
-        status: true,
-        data: count,
-        message: "Retrieved successfully",
+      const result = await users.sequelize.query(query, {
+        type: users.sequelize.QueryTypes.SELECT,
       });
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  async get_all_active_users_count(req, res, next) {
-    try {
-      const get_all_active_users_count_query = `SELECT count(*) FROM users WHERE active='Y'`;
-
-      const get_all_active_users_count_data = await users.sequelize.query(
-        get_all_active_users_count_query,
-        {
-          type: users.sequelize.QueryTypes.SELECT,
-        }
-      );
-
-      if (get_all_active_users_count_data) {
+  
+      if (result.length > 0) {
         res.status(200).json({
           status: true,
-          data: Number(get_all_active_users_count_data[0].count),
+          data: {
+            total_users: Number(result[0].total_users),
+            active_users: Number(result[0].active_users),
+            inactive_users: Number(result[0].inactive_users),
+            admins_count: Number(result[0].admins_count),
+          },
           message: "Retrieved successfully",
         });
       } else {
         res.json({
           status: false,
-          Data: [],
-          message: "Failed to retrieve data",
-        });
-      }
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  async get_all_inactive_users_count(req, res, next) {
-    try {
-      const get_all_inactive_users_count_query = `SELECT count(*) FROM users WHERE active='N'`;
-
-      const get_all_inactive_users_count_data = await users.sequelize.query(
-        get_all_inactive_users_count_query,
-        {
-          type: users.sequelize.QueryTypes.SELECT,
-        }
-      );
-
-      if (get_all_inactive_users_count_data) {
-        res.status(200).json({
-          status: true,
-          data: Number(get_all_inactive_users_count_data[0].count),
-          message: "Retrieved successfully",
-        });
-      } else {
-        res.json({
-          status: false,
-          Data: [],
+          data: {},
           message: "Failed to retrieve data",
         });
       }
