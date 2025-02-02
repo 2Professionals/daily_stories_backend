@@ -142,21 +142,33 @@ class usersDao {
 
   async loginUser(req, res, next) {
     const { user_email, user_password } = req.body;
-    // console.log("re.body: ", req.body);
 
     if (!user_email || !user_password) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Email and password are required." });
+      return res.status(400).json({ status: false, message: "Email and password are required." });
     }
 
     try {
-      const get_user_query = `SELECT * FROM users WHERE user_email = :user_email AND active = 'Y' LIMIT 1`;
+      const get_user_query = 
+      `SELECT users.user_id,
+          users.user_username, 
+          users.user_name, 
+          users.user_lastname, 
+          users.user_email, 
+          users.user_password, 
+          roles.role_name 
+          FROM users 
+          left join roles
+          on users.role_id = roles.role_id
+          WHERE user_email = :user_email
+          AND users.active = 'Y'
+          LIMIT 1 `;
+          // `SELECT * FROM users WHERE user_email = :user_email AND active = 'Y' LIMIT 1`
       const [user] = await users.sequelize.query(get_user_query, {
         replacements: { user_email },
         type: users.sequelize.QueryTypes.SELECT,
       });
-
+      // console.log("connected user ==============> ", user);
+      
       if (!user) {
         return res
           .status(401)
@@ -167,9 +179,6 @@ class usersDao {
         user_password,
         user.user_password
       );
-      // console.log("user password (o):  ",typeof(user_password), " / ", user_password );
-      // console.log("user password (from form):  ",typeof(user.user_password)," / ", user.user_password );
-      // console.log("isPasswordValid -----> ", isPasswordValid);
 
       if (!isPasswordValid) {
         return res
@@ -187,6 +196,7 @@ class usersDao {
 
       return res.status(200).json({
         status: true,
+        data:user,
         message: "Login successful",
         token,
       });
