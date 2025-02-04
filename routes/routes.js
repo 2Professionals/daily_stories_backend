@@ -3,6 +3,7 @@ const router = express.Router();
 
 const users_controller = require('../controllers/users.controllers');
 const roles_controller = require('../controllers/roles.controllers');
+const posts_controller = require('../controllers/posts.controllers');
 
 // USERS ROUTES
 router.get('/users/getAllUsers/', users_controller.getAllUsers);
@@ -15,8 +16,10 @@ router.get('/users/getUserStatistics/', users_controller.getUserStatistics);
 
 
 
-
 // ROLES ROUTES
 router.get('/roles/getAllRoles/', roles_controller.getAllRoles);
+
+//POSTS ROUTES
+router.get('/posts/getAllPosts/', posts_controller.getAllPosts)
 
 module.exports = router;
