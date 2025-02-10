@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const {users} = require("../models/users.models");
+const { users } = require("../models/users.models");
 const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.AUTH_SECRET_KEY;
@@ -7,7 +7,17 @@ const SECRET_KEY = process.env.AUTH_SECRET_KEY;
 class usersDao {
   async getAllUsers(req, res, next) {
     try {
-      const get_all_users_query = `SELECT * FROM users WHERE active = 'Y' ORDER BY user_id ASC`;
+      const limit = parseInt(req.query.limit) || 3;
+      const offset = parseInt(req.query.offset) || 0;
+
+      const get_all_users_query = `
+      SELECT users.user_id, users.user_username, users.user_name,
+             users.user_lastname, users.user_email, roles.role_name
+      FROM users 
+      LEFT JOIN roles ON roles.role_id = users.role_id
+      WHERE users.active = 'Y' AND roles.active = 'Y'
+      ORDER BY user_id ASC
+      LIMIT ${limit} OFFSET ${offset}`;
 
       const get_all_users_data = await users.sequelize.query(
         get_all_users_query,
@@ -16,16 +26,55 @@ class usersDao {
         }
       );
 
-      if (get_all_users_data) {
+      const totalCountQuery = `SELECT COUNT(*) as total FROM users 
+                             WHERE active = 'Y'`;
+      const totalCountResult = await users.sequelize.query(totalCountQuery, {
+        type: users.sequelize.QueryTypes.SELECT,
+      });
+
+      const total = totalCountResult[0]?.total || 0;
+
+      res.status(200).json({
+        status: true,
+        data: get_all_users_data,
+        total: total,
+        message: "Retrieved successfully",
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async getAllInactiveUsers(req, res, next) {
+    try {
+      const get_all_inactive_users_query = `SELECT users.user_id,
+                                    users.user_username,
+                                    users.user_name,
+                                    users.user_lastname,
+                                    users.user_email,
+                                    roles.role_name
+                                    FROM users 
+                                    LEFT JOIN roles 
+                                    ON roles.role_id = users.role_id
+                                    WHERE users.active = 'N' or roles.active='N'
+                                    ORDER BY user_id ASC`;
+      const get_all_inactive_users_data = await users.sequelize.query(
+        get_all_inactive_users_query,
+        {
+          type: users.sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      if (get_all_inactive_users_data) {
         res.status(200).json({
           status: true,
-          Data: get_all_users_data,
+          data: get_all_inactive_users_data,
           message: "Retrieved successfully",
         });
       } else {
         res.json({
           status: false,
-          Data: [],
+          data: [],
           message: "Failed to retrieve data",
         });
       }
@@ -53,13 +102,13 @@ class usersDao {
       if (get_usr_by_id_data) {
         res.status(200).json({
           status: true,
-          Data: get_usr_by_id_data,
+          data: get_usr_by_id_data,
           message: "Retrieved successfully",
         });
       } else {
         res.json({
           status: false,
-          Data: [],
+          data: [],
           message: "Failed to retrieve data",
         });
       }
@@ -77,13 +126,13 @@ class usersDao {
       if (get_admin_data) {
         res.status(200).json({
           status: true,
-          Data: get_admin_data,
+          data: get_admin_data,
           message: "Retrieved successfully",
         });
       } else {
         res.json({
           status: false,
-          Data: [],
+          data: [],
           message: "Failed to retrieve data",
         });
       }
@@ -144,12 +193,13 @@ class usersDao {
     const { user_email, user_password } = req.body;
 
     if (!user_email || !user_password) {
-      return res.status(400).json({ status: false, message: "Email and password are required." });
+      return res
+        .status(400)
+        .json({ status: false, message: "Email and password are required." });
     }
 
     try {
-      const get_user_query = 
-      `SELECT users.user_id,
+      const get_user_query = `SELECT users.user_id,
           users.user_username, 
           users.user_name, 
           users.user_lastname, 
@@ -162,13 +212,13 @@ class usersDao {
           WHERE user_email = :user_email
           AND users.active = 'Y'
           LIMIT 1 `;
-          // `SELECT * FROM users WHERE user_email = :user_email AND active = 'Y' LIMIT 1`
+      // `SELECT * FROM users WHERE user_email = :user_email AND active = 'Y' LIMIT 1`
       const [user] = await users.sequelize.query(get_user_query, {
         replacements: { user_email },
         type: users.sequelize.QueryTypes.SELECT,
       });
       // console.log("connected user ==============> ", user);
-      
+
       if (!user) {
         return res
           .status(401)
@@ -196,7 +246,7 @@ class usersDao {
 
       return res.status(200).json({
         status: true,
-        data:user,
+        data: user,
         message: "Login successful",
         token,
       });
@@ -256,12 +306,13 @@ class usersDao {
       if (add_new_user_data) {
         res.status(201).json({
           status: true,
-          Data: add_new_user_data[0],
+          data: add_new_user_data[0],
           message: "User added successfully",
         });
       } else {
         res.status(500).json({
           status: false,
+          data: [],
           message: "Failed to add user",
         });
       }
@@ -317,11 +368,11 @@ class usersDao {
             LEFT JOIN roles ON users.role_id = roles.role_id 
             WHERE roles.role_name = 'admin' OR roles.role_name = 'super admin') AS admins_count
       `;
-  
+
       const result = await users.sequelize.query(query, {
         type: users.sequelize.QueryTypes.SELECT,
       });
-  
+
       if (result.length > 0) {
         res.status(200).json({
           status: true,

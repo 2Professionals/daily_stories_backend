@@ -9,6 +9,7 @@ const publishers_controller = require('../controllers/publishers.controllers');
 
 // USERS ROUTES
 router.get('/users/getAllUsers/', users_controller.getAllUsers);
+router.get('/users/getAllInactiveUsers/', users_controller.getAllInactiveUsers);
 router.get('/users/getUserById/:params?', users_controller.getUserById);
 router.get('/users/getAdmin/', users_controller.getAllAdmins);
 router.post('/users/addNewUser/:params?', users_controller.addNewUser);

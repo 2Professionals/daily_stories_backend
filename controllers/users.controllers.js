@@ -6,6 +6,9 @@ module.exports = {
   getAllUsers: function (req, res, next) {
     users_instance.getAllUsers(req, res, next);
   },
+  getAllInactiveUsers: function (req, res, next) {
+    users_instance.getAllInactiveUsers(req, res, next);
+  },
   getUserById: function (req, res, next) {
     users_instance.getUserById(req, res, next);
   },
