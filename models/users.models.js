@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
-
 const { sequelize } = require("../database/db.js");
+const roles = require("./roles.models.js");
 
 const users = sequelize.define(
   "users",
@@ -33,8 +33,12 @@ const users = sequelize.define(
     },
     role_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: 3
+      allowNull: false,
+      defaultValue: 3,
+      references: {
+        model: roles,
+        key: "role_id",
+      },
     },
     active: {
       type: DataTypes.STRING,
@@ -47,18 +51,7 @@ const users = sequelize.define(
   }
 );
 
-const roles = require("./roles.models.js");
-
-users.prototype.modelIncludes = {
-  roles: {
-    model: roles,
-  },
-};
-users.associate = function (models) {
-  users.belongsTo(models.roles, {
-    foreignKey: "role_id",
-  });
-};
+users.belongsTo(roles, { foreignKey: "role_id", as: "role" });
 
 module.exports = {
   users,

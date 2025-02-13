@@ -1,26 +1,29 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require("sequelize");
+const { sequelize } = require("../database/db.js");
 
-const {sequelize} = require('../database/db.js');
-
-const roles = sequelize.define('roles', {
-  role_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: false,
+const roles = sequelize.define(
+  "roles",
+  {
+    role_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: false,
+    },
+    role_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    active: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "Y",
+    },
   },
-  role_name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'user'
-  },
-  active:{
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'Y'
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true,
-});
+);
 
 module.exports = {
   roles,
