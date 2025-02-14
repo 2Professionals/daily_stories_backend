@@ -5,6 +5,7 @@ const users_controller = require('../controllers/users.controllers');
 const roles_controller = require('../controllers/roles.controllers');
 const posts_controller = require('../controllers/posts.controllers');
 const publishers_controller = require('../controllers/publishers.controllers');
+const categories_controller = require('../controllers/categories.controllers');
 
 
 // USERS ROUTES
@@ -27,5 +28,9 @@ router.get('/posts/getAllPosts/', posts_controller.getAllPosts);
 
 // PUBLISHERS ROUTES
 router.get('/posts/getAllPublishers/', publishers_controller.getAllPublishers);
+
+// CATEGORIES ROUTES
+router.get('/categories/getAllCategories/', categories_controller.getAllCategories);
+
 
 module.exports = router;

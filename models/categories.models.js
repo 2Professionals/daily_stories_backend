@@ -1,18 +1,17 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const { sequelize } = require("../database/db.js");
 
-const roles = sequelize.define(
-  "roles",
+const categories = sequelize.define(
+  "categories",
   {
-    role_id: {
+    category_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    role_name: {
-      type: DataTypes.STRING,
+    category_name: {
+      type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
     },
     active: {
       type: DataTypes.STRING,
@@ -25,7 +24,16 @@ const roles = sequelize.define(
   }
 );
 
+const posts = require("./posts.models.js");
+
+categories.associate = function (models) {
+  categories.hasMany(models.posts, {
+    foreignKey: "category_id",
+    onDelete: "CASCADE",
+  });
+};
+
 module.exports = {
-  roles,
+  categories,
   sequelize,
 };
