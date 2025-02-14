@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const { sequelize } = require("../database/db.js");
+
 const roles = require("./roles.models.js");
 
 const users = sequelize.define(
@@ -36,7 +37,7 @@ const users = sequelize.define(
       allowNull: false,
       defaultValue: 3,
       references: {
-        model: roles,
+        model: 'roles',
         key: "role_id",
       },
     },
@@ -51,7 +52,7 @@ const users = sequelize.define(
   }
 );
 
-users.belongsTo(roles, { foreignKey: "role_id", as: "role" });
+users.belongsTo(sequelize.models.roles, { foreignKey: "role_id", as: "role" });
 
 module.exports = {
   users,
