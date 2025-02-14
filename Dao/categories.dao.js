@@ -5,7 +5,7 @@ class categoriesDao {
   async getAllCategories(req, res, next) {
 
       try {
-      const get_all_categories_query = "SELECT * FROM categories WHERE active= 'Y' ";
+      const get_all_categories_query = "SELECT * FROM categories WHERE active= 'Y' ORDER BY category_id ASC";
       const get_all_categories_data = await categories.sequelize.query(
         get_all_categories_query,
         {
