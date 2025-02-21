@@ -25,6 +25,8 @@ router.get('/roles/getAllRoles/', roles_controller.getAllRoles);
 
 // POSTS ROUTES
 router.get('/posts/getAllPosts/', posts_controller.getAllPosts);
+router.post('/posts/addPost/', posts_controller.addPost);
+
 
 // PUBLISHERS ROUTES
 router.get('/posts/getAllPublishers/', publishers_controller.getAllPublishers);
