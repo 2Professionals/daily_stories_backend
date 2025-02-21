@@ -6,4 +6,7 @@ module.exports = {
   getAllPosts: function (req, res, next) {
     posts_instance.getAllPosts(req, res, next);
   },
+  addPost: function (req, res, next) {
+    posts_instance.addPost(req, res, next);
+  },
 };
