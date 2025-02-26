@@ -33,6 +33,8 @@ router.get('/posts/getAllPublishers/', publishers_controller.getAllPublishers);
 
 // CATEGORIES ROUTES
 router.get('/categories/getAllCategories/', categories_controller.getAllCategories);
+router.post('/categories/addCategory/', categories_controller.addCategory);
+
 
 
 module.exports = router;
