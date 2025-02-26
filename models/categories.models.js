@@ -18,6 +18,16 @@ const categories = sequelize.define(
       allowNull: false,
       defaultValue: "Y",
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.NOW,
+    },
   },
   {
     timestamps: true,
