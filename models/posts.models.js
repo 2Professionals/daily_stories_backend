@@ -53,6 +53,12 @@ posts.associate = function (models) {
   });
 };
 
+// posts.sync({ force: true }) // ⚠️ This will delete all data in the posts table
+//   .then(() => {
+//     console.log("Posts table updated!");
+//   })
+//   .catch((err) => console.error(err));
+
 module.exports = {
   posts,
   sequelize,
