@@ -29,7 +29,7 @@ router.post('/posts/addPost/', posts_controller.addPost);
 
 
 // PUBLISHERS ROUTES
-router.get('/posts/getAllPublishers/', publishers_controller.getAllPublishers);
+// router.get('/posts/getAllPublishers/', publishers_controller.getAllPublishers);
 
 // CATEGORIES ROUTES
 router.get('/categories/getAllCategories/', categories_controller.getAllCategories);
