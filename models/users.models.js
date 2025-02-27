@@ -41,6 +41,11 @@ const users = sequelize.define(
         key: "role_id",
       },
     },
+    is_publisher: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     active: {
       type: DataTypes.STRING,
       allowNull: false,
