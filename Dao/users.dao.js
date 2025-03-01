@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.AUTH_SECRET_KEY;
 
 class usersDao {
+  
   async getAllUsers(req, res, next) {
     try {
       let limit = req.query.limit ? parseInt(req.query.limit) : null;
