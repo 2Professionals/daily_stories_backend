@@ -18,6 +18,8 @@ router.post('/users/addNewUser/:params?', users_controller.addNewUser);
 router.post("/users/login", users_controller.loginUser);
 router.get("/users/hash", users_controller.hashPasswords); // hash old passwords
 router.get('/users/getUserStatistics/', users_controller.getUserStatistics);
+router.post('/users/requestPublisherStatus/', users_controller.requestPublisherStatus);
+
 
 
 // ROLES ROUTES

@@ -27,4 +27,7 @@ module.exports = {
   getUserStatistics: function (req, res, next) {
     users_instance.getUserStatistics(req, res, next);
   },
+  requestPublisherStatus: function (req, res, next) {
+    users_instance.requestPublisherStatus(req, res, next);
+  },
 };
