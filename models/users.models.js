@@ -46,6 +46,11 @@ const users = sequelize.define(
       allowNull: false,
       defaultValue: false,
     },
+    publisher_request: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     active: {
       type: DataTypes.STRING,
       allowNull: false,
