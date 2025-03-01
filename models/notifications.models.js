@@ -19,7 +19,12 @@ const notifications = sequelize.define('notifications', {
     seen: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    }
+    },
+    active: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "Y",
+      },
 }, {
     timestamps: true
 });
