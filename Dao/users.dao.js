@@ -211,12 +211,10 @@ class usersDao {
           WHERE user_email = :user_email
           AND users.active = 'Y'
           LIMIT 1 `;
-      // `SELECT * FROM users WHERE user_email = :user_email AND active = 'Y' LIMIT 1`
       const [user] = await users.sequelize.query(get_user_query, {
         replacements: { user_email },
         type: users.sequelize.QueryTypes.SELECT,
       });
-      // console.log("connected user ==============> ", user);
 
       if (!user) {
         return res
@@ -302,12 +300,24 @@ class usersDao {
         }
       );
 
+      const token = jwt.sign(
+        { user_id: add_new_user_data[0].user_id, role: add_new_user_data[0].user_role },
+        SECRET_KEY,
+        {
+          expiresIn: "24h",
+        }
+      );
+
       if (add_new_user_data) {
+        console.log("new user data [0] ==============> ", add_new_user_data[0][0]);
+        
         res.status(201).json({
           status: true,
-          data: add_new_user_data[0],
+          data: add_new_user_data[0][0],
           message: "User added successfully",
+          token
         });
+
       } else {
         res.status(500).json({
           status: false,
