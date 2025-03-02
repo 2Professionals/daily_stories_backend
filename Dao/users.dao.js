@@ -253,9 +253,6 @@ class usersDao {
   }
 
   async addNewUser(req, res, next) {
-    let params = req.params.params;
-    params = params && params.length ? JSON.parse(params) : {};
-
     try {
       const {
         user_username,
@@ -264,72 +261,84 @@ class usersDao {
         user_email,
         user_password,
       } = req.body;
-
-      if (
-        !user_username ||
-        !user_name ||
-        !user_lastname ||
-        !user_email ||
-        !user_password
-      ) {
+  
+      if (!user_username || !user_name || !user_lastname || !user_email || !user_password) {
         return res.status(400).json({
           status: false,
           message: "All fields are required",
         });
       }
-
+  
       const hashedPassword = await bcrypt.hash(user_password, 10);
-
+  
       const add_new_user_query = `
         INSERT INTO users (user_username, user_name, user_lastname, user_email, user_password)
         VALUES (:user_username, :user_name, :user_lastname, :user_email, :user_password)
         RETURNING *;
       `;
-
-      const add_new_user_data = await users.sequelize.query(
-        add_new_user_query,
-        {
-          replacements: {
-            user_username,
-            user_name,
-            user_lastname,
-            user_email,
-            user_password: hashedPassword,
-          },
-          type: users.sequelize.QueryTypes.INSERT,
-        }
-      );
-
-      const token = jwt.sign(
-        { user_id: add_new_user_data[0].user_id, role: add_new_user_data[0].user_role },
-        SECRET_KEY,
-        {
-          expiresIn: "24h",
-        }
-      );
-
-      if (add_new_user_data) {
-        console.log("new user data [0] ==============> ", add_new_user_data[0][0]);
-        
-        res.status(201).json({
-          status: true,
-          data: add_new_user_data[0][0],
-          message: "User added successfully",
-          token
-        });
-
-      } else {
-        res.status(500).json({
+  
+      const add_new_user_data = await users.sequelize.query(add_new_user_query, {
+        replacements: { user_username, user_name, user_lastname, user_email, user_password: hashedPassword },
+        type: users.sequelize.QueryTypes.INSERT,
+      });
+  
+      if (!add_new_user_data || !add_new_user_data[0] || !add_new_user_data[0][0]) {
+        return res.status(500).json({
           status: false,
-          data: [],
           message: "Failed to add user",
         });
       }
+  
+      const newUser = add_new_user_data[0][0];
+  
+      const get_user_query = `
+        SELECT users.user_id, 
+               users.user_username, 
+               users.user_name, 
+               users.user_lastname,
+               users.user_password, 
+               users.user_email, 
+               roles.role_name 
+        FROM users 
+        LEFT JOIN roles ON users.role_id = roles.role_id
+        WHERE users.user_email = :user_email
+        AND users.active = 'Y'
+        LIMIT 1;
+      `;
+  
+      const [user] = await users.sequelize.query(get_user_query, {
+        replacements: { user_email: newUser.user_email },
+        type: users.sequelize.QueryTypes.SELECT,
+      });
+  
+      if (!user) {
+        return res.status(500).json({
+          status: false,
+          message: "Failed to retrieve user details",
+        });
+      }
+  
+      const token = jwt.sign(
+        {
+          user_id: user.user_id,
+          role: user.role_name,
+        },
+        SECRET_KEY,
+        { expiresIn: "24h" }
+      );
+      
+      return res.status(201).json({
+        status: true,
+        data: user,
+        message: "User added successfully",
+        token,
+      });
+  
     } catch (error) {
       return next(error);
     }
   }
-
+  
   // hash old passwords.
   async hashPasswords(req, res, next) {
     try {
