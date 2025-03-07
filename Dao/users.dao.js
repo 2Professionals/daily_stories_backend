@@ -417,21 +417,42 @@ class usersDao {
   async requestPublisherStatus(req, res, next) {
     try {
       const userId = req.body.user_id;
+      console.log("userId", userId);
+      console.log("req.body", req.body);
+  
+      // Update the publisher request in the users table
+      const update_publisher_request_query = `
+        UPDATE users
+        SET publisher_request = true
+        WHERE user_id = ${userId}
+      `;
+      // await sequelize.query(updateQuery, {
+      //   replacements: { userId },
+      //   type: sequelize.QueryTypes.UPDATE,
+      // });
 
-      await users.update(
-        {
-          publisher_request: true,
-        },
-        {
-          where: { user_id: userId },
-        }
-      );
-
-      await notifications.create({
-        user_id: userId,
-        message: "User has requested publisher status.",
+      const update_publisher_request_data = await users.sequelize.query(update_publisher_request_query, {
+        type: users.sequelize.QueryTypes.UPDATE,
       });
+  console.log("update_publisher_request_data", update_publisher_request_data);
+  
+      // Insert a new notification into the notifications table
+      const insert_notification_query = `
+        INSERT INTO notifications (user_id, message)
+        VALUES (${userId}, 'User has requested publisher status.')
+      `;
+      // await sequelize.query(insertQuery, {
+      //   replacements: { userId },
+      //   type: sequelize.QueryTypes.INSERT,
+      // });
 
+      const insert_notification_data = await users.sequelize.query(insert_notification_query, {
+        replacements: { userId },
+        type: users.sequelize.QueryTypes.INSERT,
+      });
+      console.log("insert_notification_data", insert_notification_data);
+      
+  
       res.status(200).json({
         status: true,
         message: "Request sent to admin.",
@@ -440,6 +461,7 @@ class usersDao {
       return next(error);
     }
   }
+  
 }
 
 module.exports = usersDao;

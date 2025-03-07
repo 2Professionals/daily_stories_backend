@@ -29,7 +29,7 @@ class notificationsDao {
       return next(error);
     }
   }
-    
+    // TO BE DONE LATER: requests account + user details (requester) + web socket ....
 }
 
 module.exports = notificationsDao;
